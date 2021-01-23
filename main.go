@@ -1,6 +1,10 @@
 package main
 
 import (
+	"demo/common"
+	"demo/component/appctx"
+	"demo/module/note/notemodel"
+	"demo/module/note/notetransport/ginnote"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -15,25 +19,12 @@ type LoginData struct {
 	Password string `json:"password" form:"password"`
 }
 
-type Note struct {
-	Id      int    `json:"id,omitempty" gorm:"column:id"`
-	Title   string `json:"title" form:"title" gorm:"column:title"`
-	Content string `json:"content" form:"content" gorm:"column:content"`
-}
-
 type UpdateNote struct {
 	Title   *string `json:"title" form:"title" gorm:"column:title"`
 	Content *string `json:"content" form:"content" gorm:"column:content"`
 }
 
-func (Note) TableName() string {
-	return "notes"
-}
-
 func main() {
-
-	//dsn := "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
-	// "deliveryfood:deliveryfood@tcp(127.0.0.1:3303)/deliveryfood?charset=utf8mb4&parseTime=True&loc=Local"
 	dns := os.Getenv("DB_CONN")
 	db, err := gorm.Open(mysql.Open(dns), &gorm.Config{})
 
@@ -42,40 +33,7 @@ func main() {
 	}
 
 	db = db.Debug()
-
-	log.Println("connected to db.", db)
-
-	//var note Note
-	//note.Id = 1
-	//note.Title = "hoc lap trinh golang"
-	//note.Content = "thuc hanh bai 4"
-	//
-	//if err := db.Create(&note).Error; err != nil {
-	//	log.Println("cant create a note", err)
-	//}
-
-	//log.Println("before read from db", note)
-	//
-	//if err := db.Table(note.TableName()).
-	//	Where("id = ?", 1).
-	//	First(&note).Error; err != nil {
-	//	log.Println("cant read a note", err)
-	//}
-	//
-	//log.Println("after read from db", note.Id, note.Title, note.Content)
-
-	//if err := db.Table(note.TableName()).
-	//	Where("id = ?", 1).
-	//	Update("content", "hoc lap trinh golang vao toi thu 5").Error; err != nil {
-	//	log.Println("cant update a note", err)
-	//}
-
-	//if err := db.Table(note.TableName()).
-	//	Where("id = ?", 1).
-	//	Delete(nil).Error; err != nil {
-	//	log.Println("cant delete a note", err)
-	//}
-	log.Println("deleted a note")
+	appCtx := appctx.New(db)
 
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
@@ -84,25 +42,13 @@ func main() {
 		})
 	})
 
-	r.GET("/demo", func(c *gin.Context) {
-		c.JSON(http.StatusOK, Note{})
-	})
-
-	r.POST("/demo", func(c *gin.Context) {
-		var data LoginData
-
-		c.ShouldBind(&data)
-
-		c.JSON(http.StatusOK, data)
-	})
-
 	v1 := r.Group("/v1")
 
 	notes := v1.Group("/notes")
 	{
 		// create a new note
 		notes.POST("", func(c *gin.Context) {
-			var note Note
+			var note notemodel.Note
 
 			if err := c.ShouldBind(&note); err != nil {
 				c.AbortWithStatusJSON(400, gin.H{
@@ -122,23 +68,11 @@ func main() {
 		})
 
 		// get a list of notes
-		notes.GET("", func(c *gin.Context) {
-			var notes []Note
-
-			if err := db.Table("notes").
-				Offset(1).
-				Limit(1).
-				Find(&notes).Error; err != nil {
-				log.Println("cant read a note", err)
-			}
-
-			c.JSON(http.StatusOK, gin.H{"data": notes})
-			return
-		})
+		notes.GET("", ginnote.ListNote(appCtx))
 
 		// get a note details by id
 		notes.GET("/:note-id", func(c *gin.Context) {
-			var note Note
+			var note notemodel.Note
 			id, _ := strconv.Atoi(c.Param("note-id"))
 
 			if err := db.Table(note.TableName()).
@@ -165,7 +99,7 @@ func main() {
 			c.JSON(http.StatusOK, gin.H{"data": true})
 
 		}) // update a note by id
-		notes.DELETE("/:id") // delete a note by id
+		notes.DELETE("/:note-id", ginnote.DeleteNote(appCtx)) // delete a note by id
 	}
 
 	r.GET("/users/:id/notes") // get a list of notes belong to user by id
@@ -174,4 +108,18 @@ func main() {
 	r.POST("/cart/checkout")
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+}
+
+type fakeDeleteNoteStore struct{}
+
+func (fakeDeleteNoteStore) FindDataWithCondition(condition map[string]interface{}) (*notemodel.Note, error) {
+	return &notemodel.Note{
+		SQLModel: common.SQLModel{Id: 1, Status: 1},
+		Title:    "",
+		Content:  "",
+	}, nil
+}
+
+func (fakeDeleteNoteStore) Delete(id int) error {
+	return nil
 }
