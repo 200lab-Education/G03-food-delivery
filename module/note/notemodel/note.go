@@ -6,6 +6,10 @@ import (
 
 const EntityName = "Note"
 
+var (
+	ErrNoteDeactive = common.NewCustomError(nil, "note is deactive", "ErrNoteDeactive")
+)
+
 type Note struct {
 	common.SQLModel `json:",inline"`
 	Title           string `json:"title" form:"title" gorm:"column:title"`

@@ -1,6 +1,7 @@
 package notebusiness
 
 import (
+	"context"
 	"demo/common"
 	"demo/module/note/notemodel"
 	"errors"
@@ -14,8 +15,8 @@ import (
 //}
 
 type DeleteNoteStore interface {
-	FindDataWithCondition(condition map[string]interface{}) (*notemodel.Note, error)
-	Delete(id int) error
+	FindDataWithCondition(ctx context.Context, condition map[string]interface{}) (*notemodel.Note, error)
+	Delete(ctx context.Context, id int) error
 }
 
 type deleteNoteBiz struct {
@@ -26,14 +27,14 @@ func NewDeleteNoteBiz(store DeleteNoteStore) *deleteNoteBiz {
 	return &deleteNoteBiz{store: store}
 }
 
-func (biz *deleteNoteBiz) DeleteNote(noteId int) error {
+func (biz *deleteNoteBiz) DeleteNote(ctx context.Context, noteId int) error {
 	// Find note by id
 	// If note note found: return error note not found
 	// If old data has status is 0
 	// 	=> error: note has been deleted
 	// else
 	// delete note
-	note, err := biz.store.FindDataWithCondition(map[string]interface{}{"id": noteId})
+	note, err := biz.store.FindDataWithCondition(ctx, map[string]interface{}{"id": noteId})
 
 	if err != nil {
 		if err == common.RecordNotFound {
@@ -47,7 +48,7 @@ func (biz *deleteNoteBiz) DeleteNote(noteId int) error {
 		return errors.New("note has been deleted before")
 	}
 
-	if err := biz.store.Delete(note.Id); err != nil {
+	if err := biz.store.Delete(ctx, note.Id); err != nil {
 		return err
 	}
 

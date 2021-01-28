@@ -1,12 +1,13 @@
 package notestorge
 
 import (
+	"context"
 	"demo/common"
 	"demo/module/note/notemodel"
 	"gorm.io/gorm"
 )
 
-func (s *store) FindDataWithCondition(condition map[string]interface{}) (*notemodel.Note, error) {
+func (s *store) FindDataWithCondition(ctx context.Context, condition map[string]interface{}) (*notemodel.Note, error) {
 	db := s.db
 
 	var data notemodel.Note

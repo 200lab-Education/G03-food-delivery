@@ -1,8 +1,11 @@
 package notestorge
 
-import "demo/module/note/notemodel"
+import (
+	"context"
+	"demo/module/note/notemodel"
+)
 
-func (s *store) Delete(id int) error {
+func (s *store) Delete(ctx context.Context, id int) error {
 	db := s.db
 
 	if err := db.Table(notemodel.Note{}.TableName()).

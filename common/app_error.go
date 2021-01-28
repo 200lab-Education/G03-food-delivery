@@ -85,6 +85,14 @@ func ErrCannotDeleteEntity(entity string, err error) *AppError {
 	)
 }
 
+func ErrCannotUpdateEntity(entity string, err error) *AppError {
+	return NewCustomError(
+		err,
+		fmt.Sprintf("Cannot update %s", strings.ToLower(entity)),
+		fmt.Sprintf("ErrCannotUpdate%s", entity),
+	)
+}
+
 func ErrCannotGetEntity(entity string, err error) *AppError {
 	return NewCustomError(
 		err,

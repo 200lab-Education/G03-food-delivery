@@ -1,11 +1,12 @@
 package notestorge
 
 import (
+	"context"
 	"demo/common"
 	"demo/module/note/notemodel"
 )
 
-func (s *store) ListDataWithCondition(cond map[string]interface{}, paging *common.Paging) ([]notemodel.Note, error) {
+func (s *store) ListDataWithCondition(ctx context.Context, cond map[string]interface{}, paging *common.Paging) ([]notemodel.Note, error) {
 	db := s.db.Table(notemodel.Note{}.TableName())
 
 	db = db.Where("status <> 0")
