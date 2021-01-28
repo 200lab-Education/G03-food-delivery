@@ -25,6 +25,16 @@ func NewErrorResponse(root error, msg, log, key string) *AppError {
 	}
 }
 
+func NewFullErrorResponse(statusCode int, root error, msg, log, key string) *AppError {
+	return &AppError{
+		StatusCode: statusCode,
+		RootErr:    root,
+		Message:    msg,
+		Log:        log,
+		Key:        key,
+	}
+}
+
 func NewUnauthorized(root error, msg, key string) *AppError {
 	return &AppError{
 		StatusCode: http.StatusUnauthorized,
@@ -66,7 +76,8 @@ func ErrInvalidRequest(err error) *AppError {
 }
 
 func ErrInternal(err error) *AppError {
-	return NewErrorResponse(err, "internal error", err.Error(), "ErrInternal")
+	return NewFullErrorResponse(http.StatusInternalServerError, err,
+		"internal error", err.Error(), "ErrInternal")
 }
 
 func ErrCannotListEntity(entity string, err error) *AppError {

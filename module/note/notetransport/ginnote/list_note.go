@@ -4,12 +4,19 @@ import (
 	"demo/common"
 	"demo/module/note/notebusiness"
 	"demo/module/note/notestorge"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
+func demoCrash() {
+	var a []int
+	fmt.Println(a[0])
+}
+
 func ListNote(provider common.AppContext) func(c *gin.Context) {
 	return func(c *gin.Context) {
+		//demoCrash()
 		//id, _ := strconv.Atoi(c.Param("note-id"))
 		var paging common.Paging
 

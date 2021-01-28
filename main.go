@@ -14,12 +14,28 @@ type LoginData struct {
 	Password string `json:"password" form:"password"`
 }
 
-type UpdateNote struct {
-	Title   *string `json:"title" form:"title" gorm:"column:title"`
-	Content *string `json:"content" form:"content" gorm:"column:content"`
-}
-
 func main() {
+	//test := LoginData{
+	//	Username: "viettran",
+	//	Password: "123456",
+	//}
+	//
+	//jsonByte, err := json.Marshal(test)
+	//
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//
+	//log.Println(string(jsonByte))
+	//
+	//jsonStr := []byte("{\"username\":\"200lab\",\"password\":\"123\"}")
+	//if err := json.Unmarshal(jsonStr, &test); err != nil {
+	//	log.Fatal(err)
+	//}
+	//log.Println(test)
+	//
+	//os.Exit(0)
+
 	dns := os.Getenv("DB_CONN")
 	db, err := gorm.Open(mysql.Open(dns), &gorm.Config{})
 
