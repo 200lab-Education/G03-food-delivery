@@ -24,15 +24,12 @@ func (biz *updateNoteBusiness) UpdateNote(ctx context.Context, data *notemodel.U
 		"id": data.Id,
 	})
 
-	if note.Status == 0 {
-		return notemodel.ErrNoteDeactive
+	if err != nil {
+		return common.ErrCannotGetEntity(notemodel.EntityName, err)
 	}
 
-	if err != nil {
-		if err == common.RecordNotFound {
-
-		}
-
+	if note.Status == 0 {
+		return notemodel.ErrNoteDeactive
 	}
 
 	if err = biz.store.Update(ctx, data); err != nil {

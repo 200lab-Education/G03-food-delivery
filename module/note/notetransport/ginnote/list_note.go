@@ -21,8 +21,7 @@ func ListNote(provider common.AppContext) func(c *gin.Context) {
 		var paging common.Paging
 
 		if err := c.ShouldBind(&paging); err != nil {
-			c.JSON(401, gin.H{"error": err.Error()})
-			return
+			panic(common.ErrInvalidRequest(err))
 		}
 
 		paging.Fulfill()
@@ -34,8 +33,11 @@ func ListNote(provider common.AppContext) func(c *gin.Context) {
 		result, err := biz.ListNote(c.Request.Context(), &paging)
 
 		if err != nil {
-			c.JSON(401, err)
-			return
+			panic(err)
+		}
+
+		for i := range result {
+			result[i].GenUID(common.DbTypeNote)
 		}
 
 		c.JSON(http.StatusOK, common.NewSuccessResponse(result, paging, nil))
