@@ -19,10 +19,21 @@ func (s *store) ListDataWithCondition(ctx context.Context, cond map[string]inter
 
 	var data []notemodel.Note
 
-	if err := db.Table(notemodel.Note{}.TableName()).
-		Limit(paging.Limit).
-		Offset((paging.Page - 1) * paging.Limit).
-		Find(&data).Error; err != nil {
+	db = db.Table(notemodel.Note{}.TableName()).Limit(paging.Limit)
+
+	if paging.FakeCursor != "" {
+		uid, err := common.FromBase58(paging.FakeCursor)
+
+		if err != nil {
+			return nil, err
+		}
+
+		db = db.Where("id < ?", uid.GetLocalID())
+	} else {
+		db = db.Offset((paging.Page - 1) * paging.Limit)
+	}
+
+	if err := db.Find(&data).Error; err != nil {
 		return nil, err
 	}
 

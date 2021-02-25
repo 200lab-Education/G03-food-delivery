@@ -12,6 +12,7 @@ var (
 
 type Note struct {
 	common.SQLModel `json:",inline"`
+	UserId          int           `json:"user_id" gorm:"column:user_id;"`
 	Title           string        `json:"title" form:"title" gorm:"column:title"`
 	Content         string        `json:"content" form:"content" gorm:"column:content"`
 	Cover           *common.Image `json:"cover" gorm:"column:cover;"`

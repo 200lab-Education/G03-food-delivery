@@ -13,13 +13,14 @@ func DeleteNote(provider common.AppContext) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		id, _ := strconv.Atoi(c.Param("note-id"))
 
+		requester := c.MustGet(common.CurrentUser).(common.Requester)
+
 		db := provider.GetMainDBConnection()
 		store := notestorge.NewSQLStore(db)
-		biz := notebusiness.NewDeleteNoteBiz(store)
+		biz := notebusiness.NewDeleteNoteBiz(store, requester)
 
 		if err := biz.DeleteNote(c.Request.Context(), id); err != nil {
-			c.JSON(401, err)
-			return
+			panic(err)
 		}
 
 		c.JSON(http.StatusOK, common.SimpleSuccessResponse(true))

@@ -20,11 +20,12 @@ type DeleteNoteStore interface {
 }
 
 type deleteNoteBiz struct {
-	store DeleteNoteStore
+	store     DeleteNoteStore
+	requester common.Requester
 }
 
-func NewDeleteNoteBiz(store DeleteNoteStore) *deleteNoteBiz {
-	return &deleteNoteBiz{store: store}
+func NewDeleteNoteBiz(store DeleteNoteStore, requester common.Requester) *deleteNoteBiz {
+	return &deleteNoteBiz{store: store, requester: requester}
 }
 
 func (biz *deleteNoteBiz) DeleteNote(ctx context.Context, noteId int) error {
@@ -45,11 +46,15 @@ func (biz *deleteNoteBiz) DeleteNote(ctx context.Context, noteId int) error {
 	}
 
 	if note.Status == 0 {
-		return errors.New("note has been deleted before")
+		return common.ErrCannotDeleteEntity(notemodel.EntityName, errors.New("note has been deleted before"))
+	}
+
+	if note.UserId != biz.requester.GetUserId() {
+		return common.ErrNoPermission(errors.New("you are not owner"))
 	}
 
 	if err := biz.store.Delete(ctx, note.Id); err != nil {
-		return err
+		return common.ErrCannotDeleteEntity(notemodel.EntityName, err)
 	}
 
 	return nil

@@ -38,6 +38,10 @@ func ListNote(provider common.AppContext) func(c *gin.Context) {
 
 		for i := range result {
 			result[i].GenUID(common.DbTypeNote)
+
+			if i == len(result)-1 {
+				paging.NextCursor = result[i].FakeId.String()
+			}
 		}
 
 		c.JSON(http.StatusOK, common.NewSuccessResponse(result, paging, nil))

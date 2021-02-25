@@ -18,6 +18,9 @@ func CreateNote(provider common.AppContext) func(c *gin.Context) {
 			return
 		}
 
+		requester := c.MustGet(common.CurrentUser).(common.Requester)
+		data.UserId = requester.GetUserId()
+
 		db := provider.GetMainDBConnection()
 		store := notestorge.NewSQLStore(db)
 		biz := notebusiness.NewCreateNoteBusiness(store)
