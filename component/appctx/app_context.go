@@ -1,14 +1,24 @@
 package appctx
 
-import "gorm.io/gorm"
+import (
+	"demo/component/uploadprovider"
+	"gorm.io/gorm"
+)
 
-type ctx struct {
-	mainDB *gorm.DB
-	secret string
+type AppContext interface {
+	GetMainDBConnection() *gorm.DB
+	SecretKey() string
+	UploadProvider() uploadprovider.UploadProvider
 }
 
-func New(mainDB *gorm.DB, secret string) *ctx {
-	return &ctx{mainDB: mainDB, secret: secret}
+type ctx struct {
+	mainDB     *gorm.DB
+	secret     string
+	upProvider uploadprovider.UploadProvider
+}
+
+func New(mainDB *gorm.DB, secret string, upProvider uploadprovider.UploadProvider) *ctx {
+	return &ctx{mainDB: mainDB, secret: secret, upProvider: upProvider}
 }
 
 func (c ctx) GetMainDBConnection() *gorm.DB {
@@ -17,6 +27,10 @@ func (c ctx) GetMainDBConnection() *gorm.DB {
 
 func (c ctx) SecretKey() string {
 	return c.secret
+}
+
+func (c ctx) UploadProvider() uploadprovider.UploadProvider {
+	return c.upProvider
 }
 
 type tokenExpiry struct {

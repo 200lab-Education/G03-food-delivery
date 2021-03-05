@@ -7,7 +7,8 @@ import (
 )
 
 type ListNoteStore interface {
-	ListDataWithCondition(ctx context.Context, cond map[string]interface{}, paging *common.Paging) ([]notemodel.Note, error)
+	ListDataWithCondition(ctx context.Context, cond map[string]interface{},
+		paging *common.Paging, moreDatas ...string) ([]notemodel.Note, error)
 }
 
 type listNoteBiz struct {
@@ -19,7 +20,7 @@ func NewListNoteBiz(store ListNoteStore) *listNoteBiz {
 }
 
 func (biz *listNoteBiz) ListNote(ctx context.Context, paging *common.Paging) ([]notemodel.Note, error) {
-	result, err := biz.store.ListDataWithCondition(ctx, nil, paging)
+	result, err := biz.store.ListDataWithCondition(ctx, nil, paging, "User")
 
 	if err != nil {
 		return nil, common.ErrCannotListEntity(notemodel.EntityName, err)

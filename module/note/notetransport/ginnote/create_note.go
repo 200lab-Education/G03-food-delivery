@@ -2,6 +2,7 @@ package ginnote
 
 import (
 	"demo/common"
+	"demo/component/appctx"
 	"demo/module/note/notebusiness"
 	"demo/module/note/notemodel"
 	"demo/module/note/notestorge"
@@ -9,7 +10,7 @@ import (
 	"net/http"
 )
 
-func CreateNote(provider common.AppContext) func(c *gin.Context) {
+func CreateNote(provider appctx.AppContext) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var data notemodel.CreateNote
 

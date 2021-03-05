@@ -3,6 +3,7 @@ package userbusiness
 import (
 	"context"
 	"demo/common"
+	"demo/component/appctx"
 	"demo/component/tokenprovider"
 	"demo/module/user/usermodel"
 )
@@ -17,7 +18,7 @@ type TokenConfig interface {
 }
 
 type loginBusiness struct {
-	appCtx        common.AppContext
+	appCtx        appctx.AppContext
 	storeUser     LoginStorage
 	tokenProvider tokenprovider.Provider
 	hasher        Hasher

@@ -2,6 +2,7 @@ package ginnote
 
 import (
 	"demo/common"
+	"demo/component/appctx"
 	"demo/module/note/notebusiness"
 	"demo/module/note/notemodel"
 	"demo/module/note/notestorge"
@@ -9,7 +10,7 @@ import (
 	"net/http"
 )
 
-func UpdateNote(provider common.AppContext) func(c *gin.Context) {
+func UpdateNote(provider appctx.AppContext) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var data notemodel.UpdateNote
 		//id, _ := strconv.Atoi(c.Param("note-id"))

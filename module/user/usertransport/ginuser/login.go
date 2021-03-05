@@ -12,7 +12,7 @@ import (
 	"net/http"
 )
 
-func Login(appCtx common.AppContext) func(*gin.Context) {
+func Login(appCtx appctx.AppContext) func(*gin.Context) {
 	return func(c *gin.Context) {
 		var loginUserData usermodel.UserLogin
 

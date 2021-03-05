@@ -2,6 +2,7 @@ package ginnote
 
 import (
 	"demo/common"
+	"demo/component/appctx"
 	"demo/module/note/notebusiness"
 	"demo/module/note/notestorge"
 	"github.com/gin-gonic/gin"
@@ -9,7 +10,7 @@ import (
 	"strconv"
 )
 
-func DeleteNote(provider common.AppContext) func(c *gin.Context) {
+func DeleteNote(provider appctx.AppContext) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		id, _ := strconv.Atoi(c.Param("note-id"))
 

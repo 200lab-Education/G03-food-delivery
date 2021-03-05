@@ -2,10 +2,11 @@ package middleware
 
 import (
 	"demo/common"
+	"demo/component/appctx"
 	"github.com/gin-gonic/gin"
 )
 
-func Recover(sc common.AppContext) gin.HandlerFunc {
+func Recover(sc appctx.AppContext) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		defer func() {
 			if err := recover(); err != nil {

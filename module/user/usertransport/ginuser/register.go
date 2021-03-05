@@ -2,6 +2,7 @@ package ginuser
 
 import (
 	"demo/common"
+	"demo/component/appctx"
 	"demo/component/hasher"
 	"demo/module/user/userbusiness"
 	"demo/module/user/usermodel"
@@ -10,7 +11,7 @@ import (
 	"net/http"
 )
 
-func Register(appCtx common.AppContext) func(*gin.Context) {
+func Register(appCtx appctx.AppContext) func(*gin.Context) {
 	return func(c *gin.Context) {
 		db := appCtx.GetMainDBConnection()
 		var data usermodel.UserCreate

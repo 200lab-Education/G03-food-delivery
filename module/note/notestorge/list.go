@@ -6,7 +6,8 @@ import (
 	"demo/module/note/notemodel"
 )
 
-func (s *store) ListDataWithCondition(ctx context.Context, cond map[string]interface{}, paging *common.Paging) ([]notemodel.Note, error) {
+func (s *store) ListDataWithCondition(ctx context.Context, cond map[string]interface{},
+	paging *common.Paging, moreDatas ...string) ([]notemodel.Note, error) {
 	db := s.db.Table(notemodel.Note{}.TableName())
 
 	db = db.Where("status <> 0")
@@ -31,6 +32,10 @@ func (s *store) ListDataWithCondition(ctx context.Context, cond map[string]inter
 		db = db.Where("id < ?", uid.GetLocalID())
 	} else {
 		db = db.Offset((paging.Page - 1) * paging.Limit)
+	}
+
+	for i := range moreDatas {
+		db = db.Preload(moreDatas[i])
 	}
 
 	if err := db.Find(&data).Error; err != nil {

@@ -2,6 +2,7 @@ package ginnote
 
 import (
 	"demo/common"
+	"demo/component/appctx"
 	"demo/module/note/notebusiness"
 	"demo/module/note/notestorge"
 	"fmt"
@@ -14,7 +15,7 @@ func demoCrash() {
 	fmt.Println(a[0])
 }
 
-func ListNote(provider common.AppContext) func(c *gin.Context) {
+func ListNote(provider appctx.AppContext) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		//demoCrash()
 		//id, _ := strconv.Atoi(c.Param("note-id"))
@@ -37,7 +38,7 @@ func ListNote(provider common.AppContext) func(c *gin.Context) {
 		}
 
 		for i := range result {
-			result[i].GenUID(common.DbTypeNote)
+			result[i].Mask()
 
 			if i == len(result)-1 {
 				paging.NextCursor = result[i].FakeId.String()

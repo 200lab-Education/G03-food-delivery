@@ -1,14 +1,15 @@
 package main
 
 import (
-	"demo/common"
+	"demo/component/appctx"
 	"demo/middleware"
 	"demo/module/note/notetransport/ginnote"
+	"demo/module/upload/uploadtransport/ginupload"
 	"demo/module/user/usertransport/ginuser"
 	"github.com/gin-gonic/gin"
 )
 
-func setupRouter(r *gin.Engine, appCtx common.AppContext) {
+func setupRouter(r *gin.Engine, appCtx appctx.AppContext) {
 	r.Use(middleware.Recover(appCtx)) // global middleware
 
 	v1 := r.Group("/v1")
@@ -18,6 +19,8 @@ func setupRouter(r *gin.Engine, appCtx common.AppContext) {
 
 	v1.GET("/profile", middleware.RequiredAuth(appCtx), ginuser.GetProfile(appCtx))
 
+	v1.POST("/upload", ginupload.Upload(appCtx))
+
 	notes := v1.Group("notes")
 	{
 		notes.POST("", middleware.RequiredAuth(appCtx), ginnote.CreateNote(appCtx))
@@ -26,8 +29,10 @@ func setupRouter(r *gin.Engine, appCtx common.AppContext) {
 		notes.DELETE("/:note-id", middleware.RequiredAuth(appCtx), ginnote.DeleteNote(appCtx))
 	}
 
+	r.Static("/upload", "./static")
+
 }
 
-func setupAdminRouter(r *gin.Engine, appCtx common.AppContext) {
+func setupAdminRouter(r *gin.Engine, appCtx appctx.AppContext) {
 
 }

@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"demo/common"
+	"demo/component/appctx"
 	"demo/component/tokenprovider/jwt"
 	"demo/module/user/userstorage"
 	"errors"
@@ -33,7 +34,7 @@ func extractTokenFromHeaderString(s string) (string, error) {
 // 1. Get token from header
 // 2. Validate token and parse to payload
 // 3. From the token payload, we use user_id to find from DB
-func RequiredAuth(appCtx common.AppContext) func(c *gin.Context) {
+func RequiredAuth(appCtx appctx.AppContext) func(c *gin.Context) {
 	tokenProvider := jwt.NewTokenJWTProvider(appCtx.SecretKey())
 	return func(c *gin.Context) {
 		token, err := extractTokenFromHeaderString(c.GetHeader("Authorization"))
