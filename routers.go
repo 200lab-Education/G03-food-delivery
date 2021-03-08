@@ -29,6 +29,10 @@ func setupRouter(r *gin.Engine, appCtx appctx.AppContext) {
 		notes.DELETE("/:note-id", middleware.RequiredAuth(appCtx), ginnote.DeleteNote(appCtx))
 	}
 
+	r.NoRoute(func(c *gin.Context) {
+		c.JSON(404, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
+	})
+
 	r.Static("/upload", "./static")
 
 }

@@ -36,12 +36,13 @@ func Upload(appCtx appctx.AppContext) func(*gin.Context) {
 			panic(common.ErrInvalidRequest(err))
 		}
 
+		_ = file.Close() // we can close here or
+		//defer file.Close()
+
 		dataBytes := make([]byte, fileHeader.Size)
 		if _, err := file.Read(dataBytes); err != nil {
 			panic(common.ErrInvalidRequest(err))
 		}
-
-		_ = file.Close() // we can close here
 
 		imgStore := uploadstorage.NewSQLStore(db)
 		biz := uploadbusiness.NewUploadBiz(appCtx.UploadProvider(), imgStore)
@@ -50,6 +51,6 @@ func Upload(appCtx appctx.AppContext) func(*gin.Context) {
 		if err != nil {
 			panic(err)
 		}
-		c.JSON(200, common.SimpleSuccessResponse(img))
+		c.JSON(200, common.SimpleSuccessResponse(img.Id))
 	}
 }

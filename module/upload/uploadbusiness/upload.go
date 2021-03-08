@@ -37,6 +37,8 @@ func (biz *uploadBiz) Upload(ctx context.Context, data []byte, folder, fileName 
 		return nil, uploadmodel.ErrFileIsNotImage(err)
 	}
 
+	// https://github.com/gabriel-vasile/mimetype (use for checking file type)
+
 	if strings.TrimSpace(folder) == "" {
 		folder = "img"
 	}
@@ -55,10 +57,10 @@ func (biz *uploadBiz) Upload(ctx context.Context, data []byte, folder, fileName 
 	//img.CloudName = "s3" // should be set in provider
 	//img.Extension = fileExt
 
-	//if err := biz.imgStore.CreateImage(ctx, img); err != nil {
-	//	// delete img on S3
-	//	return nil, uploadmodel.ErrCannotSaveFile(err)
-	//}
+	if err := biz.imgStore.CreateImage(ctx, img); err != nil {
+		// delete img on S3
+		return nil, uploadmodel.ErrCannotSaveFile(err)
+	}
 
 	return img, nil
 }

@@ -6,6 +6,7 @@ import (
 	"demo/module/note/notebusiness"
 	"demo/module/note/notemodel"
 	"demo/module/note/notestorge"
+	"demo/module/upload/uploadstorage"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -24,7 +25,8 @@ func CreateNote(provider appctx.AppContext) func(c *gin.Context) {
 
 		db := provider.GetMainDBConnection()
 		store := notestorge.NewSQLStore(db)
-		biz := notebusiness.NewCreateNoteBusiness(store)
+		imgStore := uploadstorage.NewSQLStore(db)
+		biz := notebusiness.NewCreateNoteBusiness(store, imgStore)
 
 		if err := biz.CreateNote(c.Request.Context(), &data); err != nil {
 			c.JSON(400, common.ErrInvalidRequest(err))

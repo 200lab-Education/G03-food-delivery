@@ -60,15 +60,14 @@ func (provider *s3Provider) SaveFileUploaded(ctx context.Context, data []byte, d
 		Body:        fileBytes,
 	})
 
-	//t := time.Now().Add(time.Second * 20)
 	//f, _ := s3.New(provider.session).PutObjectRequest(&s3.PutObjectInput{
 	//	Bucket:  aws.String(provider.bucketName),
 	//	Key:     aws.String(dst),
 	//	ACL:     aws.String("private"),
-	//	Expires: &t,
+	//	//Expires: &t,
 	//})
 	//
-	//f.Sign()
+	//url, err := f.Presign(time.Second * 20)
 
 	if err != nil {
 		return nil, err
