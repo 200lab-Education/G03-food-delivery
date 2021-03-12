@@ -12,6 +12,29 @@ import (
 )
 
 func main() {
+	//var count int = 0
+	//lock := new(sync.RWMutex)
+	//wg := new(sync.WaitGroup)
+	//
+	//wg.Add(5)
+	//for i := 1; i <= 5; i++ {
+	//	//wg.Add(1)
+	//	go func() {
+	//		for j := 1; j <= 10000; j++ {
+	//			// 1. Read count
+	//			// 2. Increase one unit
+	//			// 3. Assign result to count
+	//			lock.Lock()
+	//			count += 1
+	//			lock.Unlock()
+	//		}
+	//		wg.Done()
+	//	}()
+	//}
+	//
+	//wg.Wait()
+	//fmt.Println("Count:", count)
+
 	sysSecret := os.Getenv("SYSTEM_SECRET")
 	dns := os.Getenv("DB_CONN")
 
