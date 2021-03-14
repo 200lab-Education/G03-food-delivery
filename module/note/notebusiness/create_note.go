@@ -3,9 +3,8 @@ package notebusiness
 import (
 	"context"
 	"demo/common"
-	"demo/common/asyncjob"
 	"demo/module/note/notemodel"
-	"log"
+	"demo/pubsub"
 )
 
 type ImageStore interface {
@@ -25,12 +24,14 @@ type CreateNoteStore interface {
 type createNoteBusiness struct {
 	imgStore ImageStore
 	store    CreateNoteStore
+	pb       pubsub.Pubsub
 }
 
-func NewCreateNoteBusiness(store CreateNoteStore, imgStore ImageStore) *createNoteBusiness {
+func NewCreateNoteBusiness(store CreateNoteStore, imgStore ImageStore, pb pubsub.Pubsub) *createNoteBusiness {
 	return &createNoteBusiness{
 		store:    store,
 		imgStore: imgStore,
+		pb:       pb,
 	}
 }
 
@@ -55,13 +56,7 @@ func (biz *createNoteBusiness) CreateNote(ctx context.Context, data *notemodel.C
 
 	// Side effect, we need to off-load
 	go func() {
-		jobDeleteImage := asyncjob.NewJob(func(ctx context.Context) error {
-			return biz.imgStore.DeleteImages(ctx, []int{data.CoverImgId})
-		})
-
-		if err := asyncjob.NewGroup(false, jobDeleteImage).Run(ctx); err != nil {
-			log.Println(err)
-		}
+		biz.pb.Publish(ctx, common.TopicNoteCreated, pubsub.NewMessage(data))
 	}()
 
 	//go func() {

@@ -15,3 +15,11 @@ type CreateNote struct {
 func (CreateNote) TableName() string {
 	return Note{}.TableName()
 }
+
+func (n *CreateNote) GetImageIds() []int {
+	return []int{n.CoverImgId}
+}
+
+func (n *CreateNote) GetId() int {
+	return n.Id
+}

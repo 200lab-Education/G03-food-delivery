@@ -26,7 +26,7 @@ func CreateNote(provider appctx.AppContext) func(c *gin.Context) {
 		db := provider.GetMainDBConnection()
 		store := notestorge.NewSQLStore(db)
 		imgStore := uploadstorage.NewSQLStore(db)
-		biz := notebusiness.NewCreateNoteBusiness(store, imgStore)
+		biz := notebusiness.NewCreateNoteBusiness(store, imgStore, provider.GetPubsub())
 
 		if err := biz.CreateNote(c.Request.Context(), &data); err != nil {
 			c.JSON(400, common.ErrInvalidRequest(err))

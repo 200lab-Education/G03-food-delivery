@@ -3,6 +3,8 @@ package main
 import (
 	"demo/component/appctx"
 	"demo/component/uploadprovider"
+	"demo/pubsub/pblocal"
+	"demo/subscriber"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/mysql"
@@ -55,7 +57,10 @@ func main() {
 	upProvider := uploadprovider.NewS3Provider(s3BucketName, s3Region,
 		s3APIKey, s3Secret, s3Domain)
 
-	appCtx := appctx.New(db, sysSecret, upProvider)
+	pb := pblocal.NewPubSub()
+
+	appCtx := appctx.New(db, sysSecret, upProvider, pb)
+	subscriber.NewEngine(appCtx).Start()
 
 	r := gin.Default()
 	r.GET("/ping", func(c *gin.Context) {
